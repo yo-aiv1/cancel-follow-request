@@ -1,0 +1,3 @@
+beautifulsoup4==4.11.1
+instagram_private_api==1.6.0.0
+rich==13.0.0
