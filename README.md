@@ -16,4 +16,4 @@ python main.py -u <username> -p <password> -f <the path to pending_follow_reques
 
 ## Updates
 
-### 1: Removed the  logininfo.py now you can enter username and password using arguments -u for username and -p for password and -f for the path for the pending_follow_requests.html
+1: Removed the  logininfo.py now you can enter username and password using arguments -u for username and -p for password and -f for the path for the pending_follow_requests.html
