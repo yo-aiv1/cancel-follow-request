@@ -13,7 +13,7 @@ Download your instagram data and copy pending_follow_requests.html to the script
 pip install -r /requirements.txt
 
 ### 4: Run the script
-python main.py -u <username> -p <password> -f <the path to pending_follow_requests.html>
+python main.py -u "username" -p "password" -f "the path to pending_follow_requests.html" 
 
 ## Updates
 
