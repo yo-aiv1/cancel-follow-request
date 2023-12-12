@@ -20,20 +20,18 @@ args = parser.parse_args()
 
 
 api = Client()
-current_path = os.getcwd()
-session_path = f"{current_path}\\session.json"
-
 
 def LoadOldData():
-    with open('done.txt', 'r', encoding='utf-8') as f:
-        AlreadyUnfollowed = []
-        data = f.readlines()
-        for username in data:
-            AlreadyUnfollowed.append(username[:-1])
+    AlreadyUnfollowed = []
+    if os.path.exists("done.txt"):
+        with open('done.txt', 'r', encoding='utf-8') as f:
+            data = f.readlines()
+            for username in data:
+                AlreadyUnfollowed.append(username[:-1])
     return AlreadyUnfollowed
 
 def Login(cl: Client, USERNAME: str, PASSWORD: str):
-    session = cl.load_settings(session_path) if os.path.exists(session_path) else None
+    session = cl.load_settings("session.json") if os.path.exists("session.json") else None
 
     login_via_session = False
     login_via_pw = False
@@ -98,5 +96,5 @@ def ExtractUsernames(filepath):
 
 if __name__ == "__main__":
     Login(api, args.username, args.password)
-    api.dump_settings(session_path)
+    api.dump_settings("session.json")
     ExtractUsernames(args.file)
