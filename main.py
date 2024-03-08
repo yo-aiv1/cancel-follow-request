@@ -90,7 +90,8 @@ def ExtractUsernames(filepath):
             username = line[list(line)[2]][0][list(line[list(line)[2]][0])[1]]
             if username not in OldData:
                 Unfollow(username)
-                time.sleep(2)
+# it is recommended to keep the delay time at 10 seconds to avoid being blacklisted by instagram for automation
+                time.sleep(10)
             else:
                 print(f"[+]-> {username} already unfollowed")
 
