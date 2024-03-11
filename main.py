@@ -5,6 +5,7 @@ from instagrapi.exceptions import LoginRequired
 import sys
 import os
 import time
+import random
 
 
 if len(sys.argv) != 7:
@@ -69,8 +70,8 @@ def Login(cl: Client, USERNAME: str, PASSWORD: str):
         sys.exit()
 
 def Unfollow(username):
-    user_id = api.user_id_from_username(username)
-    if api.user_unfollow(user_id):
+    UserID = api.user_info_by_username_v1(username).pk
+    if api.user_unfollow(UserID):
         with open('done.txt', 'a', encoding='utf-8') as f:
             f.write(username + "\n")
         print(f"[+]-> {username} unfollowed successfully.")
@@ -91,7 +92,8 @@ def ExtractUsernames(filepath):
             if username not in OldData:
                 Unfollow(username)
 # it is recommended to keep the delay time at 10 seconds to avoid being blacklisted by instagram for automation
-                time.sleep(10)
+                RandomSleep =  random.randint(10,18)
+                time.sleep(RandomSleep)
             else:
                 print(f"[+]-> {username} already unfollowed")
 
