@@ -76,8 +76,7 @@ def Unfollow(username):
             f.write(username + "\n")
         print(f"[+]-> {username} unfollowed successfully.")
     else:
-        print(f"[+]-> an error has occurred.")
-        sys.exit()
+        print(f"[+]-> an error has occurred, with the user {username}")
 
 def ExtractUsernames(filepath):
     OldData = LoadOldData()
