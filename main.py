@@ -91,7 +91,7 @@ def ExtractUsernames(filepath):
             if username not in OldData:
                 Unfollow(username)
 # it is recommended to keep the delay time at 10 seconds to avoid being blacklisted by instagram for automation
-                RandomSleep =  random.randint(10,18)
+                RandomSleep =  random.randint(15,20)
                 time.sleep(RandomSleep)
             else:
                 print(f"[+]-> {username} already unfollowed")
