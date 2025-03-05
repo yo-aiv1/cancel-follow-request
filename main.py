@@ -1,24 +1,23 @@
 import json
 import argparse
 from instagrapi import Client
-from instagrapi.exceptions import LoginRequired 
+from instagrapi.exceptions import LoginRequired, TwoFactorRequired
 import sys
 import os
 import time
 import random
 
-
-if len(sys.argv) != 7:
-    print("Usage: python main.py -u <username> -p <password> -f <path to the json file>")
+if len(sys.argv) < 7:
+    print("Usage: python main.py -u <username> -p <password> -f <path to the json file> [-2 <2fa_code>]")
     sys.exit()
 
 parser = argparse.ArgumentParser(description='Script description')
 
-parser.add_argument('-u', '--username', help='username')
-parser.add_argument('-p', '--password', help='password')
-parser.add_argument('-f', '--file', help='Path to the json file.')
+parser.add_argument('-u', '--username', help='username', required=True)
+parser.add_argument('-p', '--password', help='password', required=True)
+parser.add_argument('-f', '--file', help='Path to the json file.', required=True)
+parser.add_argument('-2', '--twofactor', help='2FA code', required=False)
 args = parser.parse_args()
-
 
 api = Client()
 
@@ -28,7 +27,7 @@ def LoadOldData():
         with open('done.txt', 'r', encoding='utf-8') as f:
             data = f.readlines()
             for username in data:
-                AlreadyUnfollowed.append(username[:-1])
+                AlreadyUnfollowed.append(username.strip())
     return AlreadyUnfollowed
 
 def Login(cl: Client, USERNAME: str, PASSWORD: str):
@@ -62,6 +61,18 @@ def Login(cl: Client, USERNAME: str, PASSWORD: str):
             print(f"[+]-> Attempting to login via username and password. username: %s" % USERNAME)
             if cl.login(USERNAME, PASSWORD):
                 login_via_pw = True
+        except TwoFactorRequired as e:
+            if args.twofactor:
+                verification_code = args.twofactor
+            else:
+                verification_code = input("Enter 2FA code: ")
+            
+            try:
+                cl.login(USERNAME, PASSWORD, verification_code=verification_code)
+                print("[+]-> Logged in with 2FA successfully.")
+                login_via_pw = True
+            except Exception as e:
+                print(f"[+]-> Couldn't login using 2FA: %s" % e)
         except Exception as e:
             print(f"[+]-> Couldn't login user using username and password: %s" % e)
 
@@ -76,22 +87,17 @@ def Unfollow(username):
             f.write(username + "\n")
         print(f"[+]-> {username} unfollowed successfully.")
     else:
-        print(f"[+]-> an error has occurred, with the user {username}")
+        print(f"[+]-> An error occurred, with the user {username}")
 
 def ExtractUsernames(filepath):
     OldData = LoadOldData()
     with open(filepath, 'r') as f:
         data = json.loads(f.read())
-# i can use the below code but in case the key's names were different it wont work:
-#        for line in data["relationships_follow_requests_sent"]:
-#            username = line["string_list_data"][0]["value"]
-# thats why i used method below:
         for line in data[next(iter(data))]:
             username = line[list(line)[2]][0][list(line[list(line)[2]][0])[1]]
             if username not in OldData:
                 Unfollow(username)
-# it is recommended to keep the delay time at 10 seconds to avoid being blacklisted by instagram for automation
-                RandomSleep =  random.randint(15,20)
+                RandomSleep = random.randint(38, 100)
                 time.sleep(RandomSleep)
             else:
                 print(f"[+]-> {username} already unfollowed")
